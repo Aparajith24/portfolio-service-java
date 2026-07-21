@@ -1,9 +1,14 @@
 package com.example.portfolio.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -18,40 +23,28 @@ public class User {
     private String email;
     private String password;
 
-    // Default constructor (required by JPA)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Portfolio> portfolios = new ArrayList<>();
+
     public User() {
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    public List<Portfolio> getPortfolios() {
+        return portfolios;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPortfolios(List<Portfolio> portfolios) {
+        this.portfolios = portfolios;
     }
 
-    public String getName() {
-        return name;
+    // Helper methods to manage bidirectional sync cleanly
+    public void addPortfolio(Portfolio portfolio) {
+        portfolios.add(portfolio);
+        portfolio.setUser(this);
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void removePortfolio(Portfolio portfolio) {
+        portfolios.remove(portfolio);
+        portfolio.setUser(null);
     }
 }
