@@ -23,7 +23,7 @@ public class Portfolio {
     private Long id;
 
     private String title;
-    private String description;
+    private String description; 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
