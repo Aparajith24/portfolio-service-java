@@ -1,5 +1,6 @@
 package com.example.portfolio.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,37 +23,15 @@ public class Portfolio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-    private String description; 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Holding> holdings = new ArrayList<>();
- 
-    public Portfolio() {
-    }
 
-    // Existing constructors and getters/setters ...
-
-    public List<Holding> getHoldings() {
-        return holdings;
-    }
-
-    public void setHoldings(List<Holding> holdings) {
-        this.holdings = holdings;
-    }
-
-    // Helper methods to keep bidirectional updates in sync
-    public void addHolding(Holding holding) {
-        holdings.add(holding);
-        holding.setPortfolio(this);
-    }
-
-    public void removeHolding(Holding holding) {
-        holdings.remove(holding);
-        holding.setPortfolio(null);
-    }
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
 }
